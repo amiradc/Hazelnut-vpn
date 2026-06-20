@@ -17,12 +17,12 @@ jobs:
       uses: actions/setup-go@v5
       with:
         go-version: '1.21'
-    - name: Create local properties
-      run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
     - name: Build debug APK
-      run: gradle assembleDebug
+      run: ./gradlew assembleDebug
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: FandoghShekan-APK
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: V2rayNG/app/build/outputs/apk/debug/app-debug.apk
