@@ -1,0 +1,20 @@
+package com.v2ray.ang.helper
+
+import java.security.MessageDigest
+
+object SecurityHelper {
+    private const val DEVICE_ID = "mi-9-lite-secure-hardware-id-12345"
+    private const val SECRET_SALT = "My_Super_Secret_Salt_990_Safe"
+
+    fun generateSecurityHeaders(): Map<String, String> {
+        val currentMin = (System.currentTimeMillis() / 60000).toString()
+        val rawString = "${DEVICE_ID}_${currentMin}_${SECRET_SALT}"
+        val hash = MessageDigest.getInstance("SHA-256")
+            .digest(rawString.toByteArray())
+            .joinToString("") { "%02x".format(it) }
+        return mapOf(
+            "device-id" to DEVICE_ID,
+            "app-hash" to hash
+        )
+    }
+}
