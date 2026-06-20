@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>فندق‌شکن</title>
+    <style>
+        body {
+            background-color: #1a120b;
+            color: #f5edce;
+            font-family: Tahoma, sans-serif;
+            text-align: center;
+            padding: 50px 20px;
+            margin: 0;
+        }
+        .card {
+            background-color: #2c1e11;
+            max-width: 380px;
+            margin: 0 auto;
+            padding: 40px 30px;
+            border-radius: 28px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.7);
+            border: 1px solid #3c2a1a;
+        }
+        .icon-container {
+            width: 140px; height: 140px;
+            border-radius: 50%;
+            margin: 0 auto 25px auto;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+            border: 3px solid #8c6239;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1a120b;
+        }
+        .icon-container img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: all 0.5s ease;
+        }
+        h2 {
+            margin-bottom: 5px;
+            font-size: 24px;
+            color: #fff;
+            font-weight: bold;
+        }
+        p {
+            color: #bcaaa4;
+            font-size: 14px;
+            margin-bottom: 35px;
+        }
+
+        .connect-btn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a67c52, #5c3d2e);
+            color: #fff;
+            border: 2px solid #8c6239;
+            font-size: 19px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 25px rgba(140,98,57,0.5);
+            margin: 0 auto 30px auto;
+            display: block;
+            outline: none;
+        }
+        .connect-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 35px rgba(166,124,82,0.8);
+        }
+        .connect-btn.connected {
+            background: linear-gradient(135deg, #3e2723, #1a0c00);
+            color: #ff7043;
+            border-color: #ff7043;
+            box-shadow: 0 0 25px rgba(216,67,21,0.4);
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #3c2a1a;
+            border-radius: 10px;
+            height: 8px;
+            margin-top: 20px;
+            display: none;
+            overflow: hidden;
+        }
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #e5a93b, #a67c52);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+        #status {
+            font-size: 14px;
+            color: #ece0d1;
+            margin-top: 15px;
+            font-weight: 500;
+            min-height: 40px;
+            line-height: 1.6;
+        }
+
+        .dialog-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10;
+            justify-content: center;
+            align-items: center;
+        }
+        .dialog-box {
+            background: #2c1e11;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 300px;
+            border: 1px solid #8c6239;
+        }
+        .dialog-box button {
+            background: #a67c52;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon-container">
+            <img id="nutImg" src="https://i.postimg.cc/mD8g8f7C/clean-nut.jpg" alt="فندق">
+        </div>
+        <h2>فندق‌شکن</h2>
+        <p>شکستن پوسته فیلترینگ با فندق شکن</p>
+        
+        <button class="connect-btn" id="mainBtn" onclick="handleVpnToggle()">اتصال</button>
+        
+        <div id="status">دکمه فندق‌شکن را لمس کنید</div>
+        
+        <div class="progress-container" id="progressArea">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    </div>
+
+    <div class="dialog-overlay" id="supportDialog">
+        <div class="dialog-box">
+            <h3>📢 حمایت از فندق‌شکن</h3>
+            <p>برای تأمین هزینه‌های سرور، لطفاً در کانال تلگرام ما عضو شوید.</p>
+            <button onclick="startConnection()">اتصال و حمایت</button>
+        </div>
+    </div>
+
+    <script>
+        let isConnected = false;
+        const brokenNutUrl = "https://i.postimg.cc/9F4P2Yv2/IMG-20260606-220106-665.jpg";
+        const cleanNutUrl = "https://i.postimg.cc/mD8g8f7C/clean-nut.jpg";
+        const TELEGRAM_CHANNEL = "https://t.me/fandoghsheknfree"; // کانال خودت
+
+        function handleVpnToggle() {
+            if (!isConnected) {
+                document.getElementById('supportDialog').style.display = 'flex';
+            } else {
+                document.getElementById('status').innerText = "در حال قطع اتصال و پاکسازی تونل شبکه...";
+                document.getElementById('mainBtn').disabled = true;
+                window.FandoghApp.onDisconnectClick();
+            }
+        }
+
+        function startConnection() {
+            document.getElementById('supportDialog').style.display = 'none';
+            document.getElementById('mainBtn').disabled = true;
+            document.getElementById('mainBtn').style.opacity = "0.7";
+            document.getElementById('progressArea').style.display = "block";
+            document.getElementById('progressBar').style.width = "20%";
+            document.getElementById('status').innerText = "🔍 در حال تایید امضای امنیتی دژ...";
+            window.FandoghApp.onConnectClick();
+        }
+
+        function onVpnConnected() {
+            // اول رابط کاربری را به‌روزرسانی کن
+            document.getElementById('status').innerHTML = "پوسته فیلترینگ شکسته شد 💥";
+            document.getElementById('mainBtn').disabled = false;
+            document.getElementById('mainBtn').style.opacity = "1";
+            document.getElementById('mainBtn').innerText = "قطع اتصال";
+            document.getElementById('mainBtn').classList.add('connected');
+            document.getElementById('nutImg').src = brokenNutUrl;
+            document.getElementById('progressArea').style.display = "none";
+            isConnected = true;
+
+            // حالا کانال تلگرام را باز کن (بعد از اتصال موفق)
+            window.open(TELEGRAM_CHANNEL, '_blank');
+        }
+
+        function onVpnDisconnected() {
+            document.getElementById('status').innerText = "اتصال قطع شد. دژ منتظر دستور جدید است.";
+            document.getElementById('mainBtn').disabled = false;
+            document.getElementById('mainBtn').style.opacity = "1";
+            document.getElementById('mainBtn').innerText = "اتصال";
+            document.getElementById('mainBtn').classList.remove('connected');
+            document.getElementById('nutImg').src = cleanNutUrl;
+            isConnected = false;
+        }
+
+        function onScanError(message) {
+            document.getElementById('status').innerText = "❌ " + message;
+            document.getElementById('mainBtn').disabled = false;
+            document.getElementById('mainBtn').style.opacity = "1";
+            document.getElementById('progressArea').style.display = "none";
+            isConnected = false;
+        }
+    </script>
+</body>
+      </html>
